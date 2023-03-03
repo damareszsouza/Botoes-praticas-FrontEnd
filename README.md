@@ -1,3 +1,148 @@
+Botões
+
+bookmark_border
+Um botão consiste em um texto ou um ícone (ou ambos) que comunica a ação que ocorre quando o usuário toca nele.
+
+
+Você pode criar o botão no seu layout de três maneiras, dependendo se ele será um botão com texto, um ícone ou ambos:
+
+Com texto, usando a classe Button:
+
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/button_text"
+    ... />
+Com um ícone, usando a classe ImageButton:
+
+<ImageButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@drawable/button_icon"
+    android:contentDescription="@string/button_icon_desc"
+    ... />
+Com texto e um ícone, usando a classe Button com o atributo android:drawableLeft:
+
+<Button
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/button_text"
+    android:drawableLeft="@drawable/button_icon"
+    ... />
+As principais classes são as seguintes:
+
+Button
+ImageButton
+Responder a eventos de clique
+Quando o usuário clica em um botão, o objeto Button recebe um evento de clique.
+
+Para definir o manipulador de eventos de clique de um botão, adicione o atributo android:onClick ao elemento <Button> no layout XML. O valor desse atributo precisa ser o nome do método que você quer chamar em resposta a um evento de clique. Em seguida, a Activity que hospeda o layout precisa implementar o método correspondente.
+
+Por exemplo, veja um layout com um botão que usa android:onClick:
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/button_send"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/button_send"
+    android:onClick="sendMessage" />
+Dentro da Activity que hospeda esse layout, o método a seguir processa o evento de clique:
+
+Kotlin
+Java
+
+/** Called when the user touches the button */
+fun sendMessage(view: View) {
+    // Do something in response to button click
+}
+O método declarado no atributo android:onClick precisa ter uma assinatura exatamente conforme mostrado acima. Especificamente, o método precisa:
+
+ser público;
+retornar nulo;
+definir um View como único parâmetro, que será o View que foi clicado.
+Usar um OnClickListener
+Também é possível declarar o manipulador de eventos de clique de forma programática, em vez de em um layout XML. Isso pode ser necessário se você instanciar o Button no momento da execução ou se precisar declarar o comportamento de clique em uma subclasse Fragment.
+
+Para declarar o manipulador de eventos de forma programática, crie um objeto View.OnClickListener e atribua-o ao botão chamando setOnClickListener(View.OnClickListener). Exemplo:
+
+Kotlin
+Java
+
+val button: Button = findViewById(R.id.button_send)
+button.setOnClickListener {
+    // Do something in response to button click
+}
+Estilizar seu botão
+A aparência do botão (imagem de plano de fundo e fonte) pode variar de acordo com o dispositivo, porque dispositivos de fabricantes diferentes costumam ter estilos padrão diferentes para controles de entrada.
+
+É possível controlar completamente o estilo dos controles usando um tema aplicado a todo o aplicativo. Por exemplo, para garantir que todos os dispositivos com o Android 4.0 ou versão mais recente usem o tema Holo no seu app, declare android:theme="@android:style/Theme.Holo" no elemento <application> do manifesto. Leia também a postagem do blog Holo Everywhere (link em inglês) para ver informações sobre como usar o tema Holo e ainda oferecer compatibilidade com dispositivos mais antigos.
+
+Para personalizar botões individuais com um plano de fundo diferente, especifique o atributo android:background com um recurso drawable ou de cores. Como alternativa, você pode aplicar um estilo ao botão, que funciona de maneira semelhante aos estilos HTML, para definir várias propriedades de estilo, como plano de fundo, fonte, tamanho, entre outras. Para ver mais informações sobre como aplicar estilos, consulte Estilos e temas.
+
+Botão sem bordas
+Um design que pode ser útil é o de um botão "sem bordas". Os botões sem bordas são parecidos com botões básicos. A diferença é que eles não apresentam bordas nem plano de fundo, mas ainda mudam de aparência em estados diferentes, como quando clicados.
+
+Para criar um botão sem bordas, aplique o estilo borderlessButtonStyle ao botão. Exemplo:
+
+
+<Button
+    android:id="@+id/button_send"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/button_send"
+    android:onClick="sendMessage"
+    style="?android:attr/borderlessButtonStyle" />
+Plano de fundo personalizado
+Caso queira realmente redefinir a aparência do seu botão, você pode especificar um plano de fundo personalizado. No entanto, em vez de fornecer um simples bitmap ou cor, seu plano de fundo precisa ser um recurso de lista de estado, que muda de aparência dependendo do estado atual do botão.
+
+Você pode definir a lista de estados em um arquivo XML que defina três imagens ou cores diferentes para os diferentes estados do botão.
+
+Para criar um drawable de lista de estados para o plano de fundo do botão:
+
+Crie três bitmaps para o plano de fundo do botão, que representem os estados padrão, pressionado e em foco.
+Para garantir que suas imagens caibam em botões de vários tamanhos, crie os bitmaps como bitmaps nine-patch.
+
+Coloque os bitmaps no diretório res/drawable/ do projeto. Cada bitmap precisa ser nomeado corretamente para refletir o estado do botão que cada um representa, como button_default.9.png, button_pressed.9.png e button_focused.9.png.
+Crie um novo arquivo XML no diretório res/drawable/, dando um nome como button_custom.xml. Insira o seguinte XML:
+
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/button_pressed"
+          android:state_pressed="true" />
+    <item android:drawable="@drawable/button_focused"
+          android:state_focused="true" />
+    <item android:drawable="@drawable/button_default" />
+</selector>
+Isso define um único recurso desenhável, que mudará a imagem de acordo com o estado atual do botão.
+
+O primeiro <item> define o bitmap a ser usado quando o botão for pressionado (ativado).
+O segundo <item> define o bitmap a ser usado quando o botão estiver em foco, ou seja, quando ele for destacado usando o trackball ou o botão direcional.
+O terceiro <item> define o bitmap a ser usado quando o botão estiver no estado padrão, não pressionado nem em foco.
+Observação: a ordem dos elementos <item> é importante. Quando esse drawable é referenciado, os elementos <item> são transferidos em ordem para determinar qual é apropriado para o estado atual do botão. Como o bitmap padrão é o último, ele só é aplicado quando as condições android:state_pressed e android:state_focused são avaliadas como falsas.
+
+Esse arquivo XML agora representa um único recurso drawable e, quando referenciado por um Button para definir o plano de fundo, a imagem exibida mudará de acordo com esses três estados.
+
+Em seguida, basta aplicar o XML file do drawable como plano de fundo do botão:
+
+<Button
+    android:id="@+id/button_send"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/button_send"
+    android:onClick="sendMessage"
+    android:background="@drawable/button_custom"  />
+Para ver mais informações sobre essa sintaxe XML, incluindo como definir um estado de botão desativado, com o cursor do mouse sobre ele ou outros, leia sobre Drawable de lista de estados.
+
+
+
+
+
+
+
+
+
 # Botoes-praticas-FrontEnd
 Conteúdo do curso Desenvolvimento Web - Praticas FrontEnd 
 
